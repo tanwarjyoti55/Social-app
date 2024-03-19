@@ -2,6 +2,21 @@ import User from "../model/userModel.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/helpers/generateTokenAndSetCookie.js";
 
+const getUserProfile = async (req, res) => {
+  const username = req.params;
+  try {
+    const user = await User.findOne(username)
+      .select("-password")
+      .select("-updatedAt");
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+    console.log(`Error Occured : ${error.message}`);
+  }
+};
 const signupUser = async (req, res) => {
   try {
     const { name, username, email, password } = req.body;
@@ -77,7 +92,7 @@ const followUnfollowUser = async (req, res) => {
     const userToModify = await User.findById(id);
     const currentUser = await User.findById(req.user._id);
 
-    if (id === req.user._id) {
+    if (id === req.user._id.toString()) {
       return res
         .status(400)
         .json({ message: "You cannot follow/unfollow yourself" });
@@ -112,6 +127,13 @@ const updateUser = async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
+
+    if (req.params.id !== userId.toString()) {
+      return res
+        .status(400)
+        .json({ message: "You cannot update other user profile" });
+    }
+
     if (password) {
       const salt = await bcrypt.genSalt(10);
       const hashPassword = await bcrypt.hash(password, salt);
@@ -124,11 +146,18 @@ const updateUser = async (req, res) => {
     user.bio = bio || user.bio;
 
     user = await user.save();
-    res.status(200).json({ message: "Updated Successfully", user });
+    res.status(200).json({ message: "Profile Updated Successfully", user });
   } catch (error) {
     res.status(500).json({ message: error.message });
     console.log(`Error Occured : ${error.message}`);
   }
 };
 
-export { signupUser, loginUser, logoutUser, followUnfollowUser, updateUser };
+export {
+  signupUser,
+  loginUser,
+  logoutUser,
+  followUnfollowUser,
+  updateUser,
+  getUserProfile,
+};

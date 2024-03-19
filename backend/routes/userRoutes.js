@@ -5,11 +5,13 @@ import {
   logoutUser,
   followUnfollowUser,
   updateUser,
+  getUserProfile,
 } from "../controller/userController.js";
 import protectRoute from "../middlewares/protectRoute.js";
 
 const routes = express.Router();
 
+routes.get("/profile/:username", getUserProfile);
 routes.post("/signup", signupUser);
 routes.post("/login", loginUser);
 routes.post("/logout", logoutUser);
