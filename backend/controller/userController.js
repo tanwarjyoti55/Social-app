@@ -9,7 +9,7 @@ const getUserProfile = async (req, res) => {
       .select("-password")
       .select("-updatedAt");
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ error: "User not found" });
     }
     res.status(200).json(user);
   } catch (error) {
@@ -22,7 +22,7 @@ const signupUser = async (req, res) => {
     const { name, username, email, password } = req.body;
     const user = await User.findOne({ $or: [{ email }, { username }] });
     if (user) {
-      return res.status(500).json("User Already Exists");
+      return res.status(500).json({ error: "User Already Exists" });
     }
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
@@ -44,7 +44,7 @@ const signupUser = async (req, res) => {
         email: newUser.email,
       });
     } else {
-      res.status(400).json("Invalid User Data");
+      res.status(400).json({ error: "Invalid User Data" });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -61,7 +61,7 @@ const loginUser = async (req, res) => {
       user?.password || ""
     );
     if (!user || !isPasswordCheck) {
-      return res.status(400).json({ message: "Invalid username or password" });
+      return res.status(400).json({ error: "Invalid username or password" });
     }
     generateTokenAndSetCookie(user._id, res);
     res.status(200).json({
@@ -79,7 +79,7 @@ const loginUser = async (req, res) => {
 const logoutUser = (req, res) => {
   try {
     res.cookie("jwt", "", { maxAge: 0 });
-    res.status(400).json({ message: "User Logout Successfully" });
+    res.status(200).json({ message: "User Logout Successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
     console.log(`Error Occured : ${error.message}`);
@@ -95,10 +95,10 @@ const followUnfollowUser = async (req, res) => {
     if (id === req.user._id.toString()) {
       return res
         .status(400)
-        .json({ message: "You cannot follow/unfollow yourself" });
+        .json({ error: "You cannot follow/unfollow yourself" });
     }
     if (!userToModify || !currentUser) {
-      return res.status(400).json({ message: "User cannot found" });
+      return res.status(400).json({ error: "User cannot found" });
     }
     const isFollowed = currentUser.following.includes(id);
     if (isFollowed) {
@@ -125,13 +125,13 @@ const updateUser = async (req, res) => {
   try {
     let user = await User.findById(userId);
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ error: "User not found" });
     }
 
     if (req.params.id !== userId.toString()) {
       return res
         .status(400)
-        .json({ message: "You cannot update other user profile" });
+        .json({ error: "You cannot update other user profile" });
     }
 
     if (password) {
