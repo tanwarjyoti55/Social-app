@@ -16,6 +16,6 @@ routes.post("/signup", signupUser);
 routes.post("/login", loginUser);
 routes.post("/logout", logoutUser);
 routes.post("/follow/:id", protectRoute, followUnfollowUser);
-routes.post("/update/:id", protectRoute, updateUser);
+routes.put("/update/:id", protectRoute, updateUser);
 
 export default routes;
