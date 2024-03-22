@@ -11,7 +11,6 @@ const Logout = () => {
     try {
       const res = await axios.post("/api/users/logout");
       const data = res.data;
-      console.log(data);
       if (data.error) {
         toast.error(data.error);
       }

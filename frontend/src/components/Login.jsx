@@ -35,7 +35,6 @@ export default function LoginCard() {
     try {
       const res = await axios.post("/api/users/login", inputs);
       const data = res.data;
-      console.log(data);
       if (data.error) {
         toast.error(data.error);
       }

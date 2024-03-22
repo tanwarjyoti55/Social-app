@@ -7,9 +7,9 @@ import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import { useSelector } from "react-redux";
 import Logout from "./components/Logout";
+import UpdatePage from "./pages/UpdatePage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import UpdatePage from "./pages/UpdatePage";
 
 function App() {
   const user = useSelector((state) => state.userSlice.value);

@@ -6,7 +6,7 @@ import { Button, useToast } from "@chakra-ui/react";
 import { BsInstagram } from "react-icons/bs";
 import { CgMoreO } from "react-icons/cg";
 
-const UserHeader = () => {
+const UserHeader = ({ user }) => {
   const toast = useToast();
 
   const copyURL = () => {
@@ -27,10 +27,10 @@ const UserHeader = () => {
       <Flex justifyContent={"space-between"} w={"full"}>
         <Box>
           <Text fontSize={"2xl"} fontWeight={"bold"}>
-            Mark Zuckerberg
+            {user.name}
           </Text>
           <Flex gap={2} alignItems={"center"}>
-            <Text fontSize={"sm"}>markzuckerberg</Text>
+            <Text fontSize={"sm"}>{user.username}</Text>
             <Text
               fontSize={"xs"}
               bg={"gray.dark"}
@@ -44,8 +44,8 @@ const UserHeader = () => {
         </Box>
         <Box>
           <Avatar
-            name="Mark Zuckerberg"
-            src="/zuck-avatar.png"
+            name={user.name}
+            src={user.profilePic}
             size={{
               base: "md",
               md: "xl",
@@ -54,11 +54,11 @@ const UserHeader = () => {
         </Box>
       </Flex>
 
-      <Text>Co-founder, executive chairman and CEO of Meta Platforms.</Text>
+      <Text>{user.bio}</Text>
 
       <Flex w={"full"} justifyContent={"space-between"}>
         <Flex gap={2} alignItems={"center"}>
-          <Text color={"gray.light"}>100 followers</Text>
+          <Text color={"gray.light"}>{user.followers.length} followers</Text>
           <Box w="1" h="1" bg={"gray.light"} borderRadius={"full"}></Box>
           <Link color={"gray.light"}>instagram.com</Link>
         </Flex>

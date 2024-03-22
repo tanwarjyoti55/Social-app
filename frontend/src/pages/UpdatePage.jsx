@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Flex,
@@ -18,6 +18,7 @@ import usePreviewImage from "../../hooks/usePreviewImage";
 import { toast } from "react-toastify";
 
 export default function UpdatePage() {
+  const [previewImage, setPreviewImage] = useState(null);
   const user = useSelector((state) => state.userSlice.value);
   const dispatch = useDispatch();
   const [inputs, setInputs] = useState({
@@ -29,15 +30,20 @@ export default function UpdatePage() {
   });
   const { handlePreviewImage, imgUrl } = usePreviewImage();
   const imgRef = useRef("");
+
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("image", imgUrl);
+
+    for (let key in inputs) {
+      formData.append(key, inputs[key]);
+    }
+
     try {
-      const res = await axios.put(`/api/users/update/${user._id}`, {
-        ...inputs,
-        profilePic: imgUrl,
-      });
+      const res = await axios.put(`/api/users/update/${user._id}`, formData);
       const data = res.data;
-      console.log(data);
       localStorage.setItem("user-threads", JSON.stringify(data));
       dispatch(userData(data));
 
@@ -47,9 +53,20 @@ export default function UpdatePage() {
         toast.success("Profile Updated Successfully");
       }
     } catch (error) {
-      toast.error(error);
+      toast.error(error.response.data.message || "An error occurred");
     }
   };
+
+  useEffect(() => {
+    if (imgUrl) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(imgUrl);
+    }
+  }, [imgUrl]);
+
   return (
     <form onSubmit={handleUpdate}>
       <Flex align={"center"} justify={"center"}>
@@ -69,7 +86,13 @@ export default function UpdatePage() {
           <FormControl>
             <Stack direction={["column", "row"]} spacing={6}>
               <Center>
-                <Avatar size="xl" src={imgUrl || user.profilePic} />
+                <Avatar
+                  size="xl"
+                  src={
+                    previewImage ||
+                    `http://localhost:5000/uploads/${user.profilePic}`
+                  }
+                />
               </Center>
               <Center w="full">
                 <Button w="full" onClick={(e) => imgRef.current.click()}>

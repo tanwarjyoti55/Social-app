@@ -6,11 +6,7 @@ const usePreviewImage = () => {
   const handlePreviewImage = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImgUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setImgUrl(e.target.files[0]);
     } else {
       toast.error("Invalid file type");
       setImgUrl(null);
