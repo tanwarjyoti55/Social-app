@@ -10,6 +10,7 @@ import Logout from "./components/Logout";
 import UpdatePage from "./pages/UpdatePage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CreatePost from "./components/CreatePost";
 
 function App() {
   const user = useSelector((state) => state.userSlice.value);
@@ -33,6 +34,7 @@ function App() {
         <Route path="/:username/post/:pid" element={<PostPage />} />
       </Routes>
       {user && <Logout />}
+      {user && <CreatePost />}
       <ToastContainer />
     </Container>
   );

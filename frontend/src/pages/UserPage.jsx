@@ -4,12 +4,15 @@ import UserPost from "../components/UserPost";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Flex, Spinner, Text } from "@chakra-ui/react";
 
 const UserPage = () => {
   const [user, setUser] = useState(null);
   const { username } = useParams();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const getUser = async () => {
       try {
         const res = await axios.get(`/api/users/profile/${username}`);
@@ -20,10 +23,22 @@ const UserPage = () => {
         setUser(data);
       } catch (error) {
         toast.error(error);
+      } finally {
+        setLoading(false);
       }
     };
     getUser();
   }, [username]);
+
+  if (!user && loading) {
+    return (
+      <Flex justifyContent={"center"}>
+        <Spinner size={"xl"} />
+      </Flex>
+    );
+  }
+
+  if (!user && !loading) return <Text>User Not Found</Text>;
   return (
     <>
       <UserHeader user={user} />

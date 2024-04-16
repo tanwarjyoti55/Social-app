@@ -25,6 +25,7 @@ import axios from "axios";
 export default function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const [inputs, setInputs] = useState({
     name: "",
@@ -34,6 +35,7 @@ export default function SignupCard() {
   });
 
   const handleSignUp = async () => {
+    setLoading(true);
     try {
       const res = await axios.post("/api/users/signup", inputs);
       const data = res.data;
@@ -46,6 +48,8 @@ export default function SignupCard() {
       dispatch(userData(data));
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,6 +136,7 @@ export default function SignupCard() {
                   bg: useColorModeValue("gray.700", "gray.800"),
                 }}
                 onClick={handleSignUp}
+                isLoading={loading}
               >
                 Sign up
               </Button>

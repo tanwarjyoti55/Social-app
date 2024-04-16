@@ -21,6 +21,7 @@ export default function UpdatePage() {
   const [previewImage, setPreviewImage] = useState(null);
   const user = useSelector((state) => state.userSlice.value);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState({
     name: user.name,
     username: user.username,
@@ -32,6 +33,7 @@ export default function UpdatePage() {
   const imgRef = useRef("");
 
   const handleUpdate = async (e) => {
+    setLoading(true);
     e.preventDefault();
 
     const formData = new FormData();
@@ -54,6 +56,8 @@ export default function UpdatePage() {
       }
     } catch (error) {
       toast.error(error.response.data.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -180,6 +184,7 @@ export default function UpdatePage() {
                 bg: "green.500",
               }}
               type="submit"
+              isLoading={loading}
             >
               Submit
             </Button>

@@ -12,7 +12,7 @@ const usePreviewImage = () => {
       setImgUrl(null);
     }
   };
-  return { handlePreviewImage, imgUrl };
+  return { handlePreviewImage, imgUrl, setImgUrl };
 };
 
 export default usePreviewImage;

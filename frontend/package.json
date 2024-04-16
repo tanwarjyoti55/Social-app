@@ -18,6 +18,7 @@
     "@emotion/styled": "^11.11.0",
     "@reduxjs/toolkit": "^2.2.1",
     "axios": "^1.6.8",
+    "date-fns": "^3.6.0",
     "framer-motion": "^11.0.14",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

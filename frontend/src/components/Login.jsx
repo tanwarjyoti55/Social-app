@@ -25,6 +25,7 @@ import axios from "axios";
 export default function LoginCard() {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const [inputs, setInputs] = useState({
     username: "",
@@ -32,6 +33,7 @@ export default function LoginCard() {
   });
 
   const handleLogin = async () => {
+    setLoading(true);
     try {
       const res = await axios.post("/api/users/login", inputs);
       const data = res.data;
@@ -42,6 +44,8 @@ export default function LoginCard() {
       dispatch(userData(data));
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -94,7 +98,7 @@ export default function LoginCard() {
             </FormControl>
             <Stack spacing={10} pt={2}>
               <Button
-                loadingText="Submitting"
+                loadingText="Loggin In"
                 size="lg"
                 bg={useColorModeValue("gray.600", "gray.700")}
                 color={"white"}
@@ -102,6 +106,7 @@ export default function LoginCard() {
                   bg: useColorModeValue("gray.700", "gray.800"),
                 }}
                 onClick={handleLogin}
+                isLoading={loading}
               >
                 Login
               </Button>
