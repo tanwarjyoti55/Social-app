@@ -1,15 +1,24 @@
 import User from "../model/userModel.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/helpers/generateTokenAndSetCookie.js";
+import mongoose from "mongoose";
 
 const getUserProfile = async (req, res) => {
-  const username = req.params;
+  // We will fetch user profile either with username or userId
+  const { username } = req.params;
   try {
-    const user = await User.findOne(username)
-      .select("-password")
-      .select("-updatedAt");
+    let user;
+    if (mongoose.Types.ObjectId.isValid(username)) {
+      user = await User.findOne({ _id: username })
+        .select("-password")
+        .select("-updatedAt");
+    } else {
+      user = await User.findOne({ username: username })
+        .select("-password")
+        .select("-updatedAt");
+    }
     if (!user) {
-      return res.status(400).json({ error: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
     res.status(200).json(user);
   } catch (error) {
@@ -17,6 +26,7 @@ const getUserProfile = async (req, res) => {
     console.log(`Error Occured : ${error.message}`);
   }
 };
+
 const signupUser = async (req, res) => {
   try {
     const { name, username, email, password } = req.body;

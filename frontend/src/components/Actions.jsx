@@ -1,19 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
 const Actions = ({ liked, setLiked }) => {
   return (
@@ -44,7 +29,6 @@ const Actions = ({ liked, setLiked }) => {
           role="img"
           viewBox="0 0 24 24"
           width="20"
-          // onClick={onOpen}
         >
           <title>Comment</title>
           <path

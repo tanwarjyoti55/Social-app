@@ -27,10 +27,10 @@ const UserHeader = ({ user }) => {
       <Flex justifyContent={"space-between"} w={"full"}>
         <Box>
           <Text fontSize={"2xl"} fontWeight={"bold"}>
-            {user.name}
+            {user?.name}
           </Text>
           <Flex gap={2} alignItems={"center"}>
-            <Text fontSize={"sm"}>{user.username}</Text>
+            <Text fontSize={"sm"}>{user?.username}</Text>
             <Text
               fontSize={"xs"}
               bg={"gray.dark"}
@@ -44,8 +44,11 @@ const UserHeader = ({ user }) => {
         </Box>
         <Box>
           <Avatar
-            name={user.name}
-            src={user.profilePic}
+            name={user?.name}
+            src={
+              `http://localhost:5000/uploads/${user?.profilePic}` ||
+              user?.profilePic
+            }
             size={{
               base: "md",
               md: "xl",
@@ -54,11 +57,11 @@ const UserHeader = ({ user }) => {
         </Box>
       </Flex>
 
-      <Text>{user.bio}</Text>
+      <Text>{user?.bio}</Text>
 
       <Flex w={"full"} justifyContent={"space-between"}>
         <Flex gap={2} alignItems={"center"}>
-          <Text color={"gray.light"}>{user.followers.length} followers</Text>
+          <Text color={"gray.light"}>{user?.followers?.length} followers</Text>
           <Box w="1" h="1" bg={"gray.light"} borderRadius={"full"}></Box>
           <Link color={"gray.light"}>instagram.com</Link>
         </Flex>
