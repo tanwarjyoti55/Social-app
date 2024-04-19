@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 
 export default function UpdatePage() {
   const [previewImage, setPreviewImage] = useState(null);
+  const[updating,setUpdating]=useState(false);
   const user = useSelector((state) => state.userSlice.value);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -42,7 +43,8 @@ export default function UpdatePage() {
     for (let key in inputs) {
       formData.append(key, inputs[key]);
     }
-
+    if(updating) return;
+    setUpdating(true)
     try {
       const res = await axios.put(`/api/users/update/${user._id}`, formData);
       const data = res.data;
