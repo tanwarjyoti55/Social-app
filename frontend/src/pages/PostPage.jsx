@@ -27,7 +27,7 @@ const PostPage = () => {
         </Flex>
       </Flex>
 
-      <Text my={3}>Let's talk about Threads.</Text>
+      <Text my={3}>Let&#39;s talk about Threads.</Text>
 
       <Box
         borderRadius={6}

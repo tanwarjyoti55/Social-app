@@ -1,7 +1,7 @@
 import { Avatar } from "@chakra-ui/avatar";
 import { Image } from "@chakra-ui/image";
 import { Box, Flex, Text } from "@chakra-ui/layout";
-import { BsThreeDots } from "react-icons/bs";
+// import { BsThreeDots } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import Actions from "./Actions";
 import { useEffect, useState } from "react";
@@ -33,7 +33,7 @@ const UserPost = ({ post, postedBy }) => {
   }, [postedBy]);
 
   return (
-    <Link to={`/${user?.username}/post/${post._id}`}>
+    <Link to={`/${user?.username}/post/${post?._id}`}>
       <Flex gap={3} mb={4} py={5}>
         <Flex flexDirection={"column"} alignItems={"center"}>
           <Avatar
@@ -43,7 +43,7 @@ const UserPost = ({ post, postedBy }) => {
               `http://localhost:5000/uploads/${user?.profilePic}` ||
               user?.profilePic
             }
-            onClick={() => {
+            onClick={(e) => {
               e.preventDefault();
               navigate(`/${user?.username}`);
             }}
@@ -94,7 +94,7 @@ const UserPost = ({ post, postedBy }) => {
               <Text
                 fontSize={"sm"}
                 fontWeight={"bold"}
-                onClick={() => {
+                onClick={(e) => {
                   e.preventDefault();
                   navigate(`/${user?.username}`);
                 }}

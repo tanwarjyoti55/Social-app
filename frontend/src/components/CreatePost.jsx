@@ -24,7 +24,8 @@ import { useParams } from "react-router-dom";
 import usePreviewImage from "../../hooks/usePreviewImage";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { postData } from "../slice/postSlice";
 
 const MAX_CHAR = 500;
 
@@ -36,11 +37,11 @@ const CreatePost = () => {
   const [remainingChar, setRemainingChar] = useState(MAX_CHAR);
   const user = useSelector((state) => state.userSlice.value);
   const [loading, setLoading] = useState(false);
-  //   const [posts, setPosts] = useRecoilState(postsAtom);
+  const dispatch =useDispatch();
+  const posts = useSelector((state)=>state.postSlice.value);
   const { username } = useParams();
 
-  console.log(imgUrl, "imgUrl");
-
+console.log(posts)
   const handleTextChange = (e) => {
     const inputText = e.target.value;
 
@@ -69,9 +70,10 @@ const CreatePost = () => {
         return;
       }
       toast.success("Post created successfully");
-      //   if (username === user.username) {
-      //     setPosts([data, ...posts]);
-      //   }
+        if (username === user.username) {
+          dispatch(postData([...posts, data]));
+          // setPosts([data, ...posts]);
+        }
       onClose();
       setPostText("");
       setImgUrl("");
@@ -81,6 +83,7 @@ const CreatePost = () => {
       setLoading(false);
     }
   };
+
 
   return (
     <>

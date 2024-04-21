@@ -5,11 +5,16 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
+import { useDispatch, useSelector } from "react-redux";
+import { postData } from "../slice/postSlice";
 
 const UserPage = () => {
   const [user, setUser] = useState(null);
   const { username } = useParams();
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const posts= useSelector((state)=>state.postSlice.value);
+  const [fetchingPost, setFetchingPost] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -30,6 +35,28 @@ const UserPage = () => {
     getUser();
   }, [username]);
 
+
+  useEffect(() => {
+    setFetchingPost(true);
+    const getPost = async () => {
+      try {
+        const res = await axios.get(`/api/posts/user/${username}`);
+        const data = res.data;
+        console.log(data,'befor dispatch')
+        if (data.error) {
+          toast.error(data.error);
+        }
+        dispatch(postData(data));
+        console.log(posts,'after dispatch');
+      } catch (error) {
+        toast.error(error);
+      } finally {
+        setFetchingPost(false);
+      }
+    };
+    getPost();
+  }, [dispatch, username]);
+
   if (!user && loading) {
     return (
       <Flex justifyContent={"center"}>
@@ -39,10 +66,23 @@ const UserPage = () => {
   }
 
   if (!user && !loading) return <Text>User Not Found</Text>;
+
+  if (!posts && fetchingPost) {
+    return (
+      <Flex justifyContent={"center"}>
+        <Spinner size={"xl"} />
+      </Flex>
+    );
+  }
+
   return (
     <>
       <UserHeader user={user} />
-      <UserPost
+      {!fetchingPost && posts?.length === 0 && <h1>No post Yet</h1>}
+      {posts.map((post) => (
+        <UserPost key={post?._id} postedBy={post?.postedBy} post={post} />
+      ))}
+      {/* <UserPost
         postImg={"/post1.png"}
         postTitle={"This is my first post"}
         likes={234}
@@ -60,7 +100,7 @@ const UserPage = () => {
         likes={100}
         replies={2}
       />
-      <UserPost postTitle={"Hey Guys"} likes={100} replies={2} />
+      <UserPost postTitle={"Hey Guys"} likes={100} replies={2} /> */}
     </>
   );
 };

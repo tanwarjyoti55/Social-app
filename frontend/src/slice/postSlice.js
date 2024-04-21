@@ -1,21 +1,23 @@
-// import { createSlice } from "@reduxjs/toolkit";
+// postSlice.js
+import { createSlice } from "@reduxjs/toolkit";
 
-// const initialState = {
-//   value: JSON.parse(localStorage.getItem("user-threads")),
-// };
+const initialState = {
+  value: [],
+};
 
-// export const postSlice = createSlice({
-//   name: "postSlice",
-//   initialState,
-//   reducers: {
-//     // logout: (state) => {
-//     //   state.value = null;
-//     // },
-//     postData: (state, action) => {
-//       state.value = action.payload;
-//     },
-//   },
-// });
+export const postSlice = createSlice({
+  name: "postSlice",
+  initialState,
+  reducers: {
+    postData: (state, action) => {
+      // Return a new state object with updated posts
+      return {
+        ...state,
+        value: action.payload,
+      };
+    },
+  },
+});
 
-// export const { postData } = postSlice.actions;
-// export default postSlice.reducer;
+export const { postData } = postSlice.actions;
+export default postSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Flex,
   Box,
@@ -6,7 +6,7 @@ import {
   FormLabel,
   Input,
   InputGroup,
-  HStack,
+  // HStack,
   InputRightElement,
   Stack,
   Button,
@@ -113,7 +113,7 @@ export default function LoginCard() {
             </Stack>
             <Stack pt={6}>
               <Text align={"center"}>
-                Don't have an account?{" "}
+                Don&#39;t have an account?{" "}
                 <Link
                   color={"blue.400"}
                   onClick={() => dispatch(switchToSignUp())}

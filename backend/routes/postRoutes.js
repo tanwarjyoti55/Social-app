@@ -6,6 +6,7 @@ import {
   likeUnlikePost,
   replyToPost,
   getFeedPost,
+  getUserPost,
 } from "../controller/postController.js";
 import protectRoute from "../middlewares/protectRoute.js";
 
@@ -31,6 +32,7 @@ const route = express.Router();
 
 route.get("/feed", protectRoute, getFeedPost);
 route.get("/:id", getPost);
+route.get("/user/:username", getUserPost);
 route.post("/create", protectRoute, upload.single("image"), createPost);
 route.delete("/:id", protectRoute, deletePost);
 route.post("/likes/:id", protectRoute, likeUnlikePost);

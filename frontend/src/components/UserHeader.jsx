@@ -5,8 +5,8 @@ import { Portal } from "@chakra-ui/portal";
 import { Button, useToast } from "@chakra-ui/react";
 import { BsInstagram } from "react-icons/bs";
 import { CgMoreO } from "react-icons/cg";
-import { useDispatch, useSelector } from "react-redux";
-import { userData } from "../slice/userSlice";
+import { useSelector } from "react-redux";
+// import { userData } from "../slice/userSlice";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -41,18 +41,17 @@ const UserHeader = ({ user }) => {
     setUpdating(true);
 try {
  
-  const res= await axios.post(`/api/users/follow/${user._id}`);
+  const res= await axios.post(`/api/users/follow/${user?._id}`);
   const data= res.data;
   if(data.error){
     toast.error(data.error);
   }
-  console.log(data,'daat')
   if(following){
-    toast.success(`Unfollow ${user.name} successfully`);
-    user.followers.pop();
+    toast.success(`Unfollow ${user?.name} successfully`);
+    user?.followers.pop();
   }else{
-    toast.success(`Followed ${user.name} successfully`);
-    user.followers.push(currentUser._id);
+    toast.success(`Followed ${user?.name} successfully`);
+    user?.followers.push(currentUser._id);
   }
   setFollowing(!following);
 } catch (error) {
@@ -100,7 +99,7 @@ try {
       <Text>{user?.bio}</Text>
 
       {currentUser._id===user._id &&
-      <Link as={RouterLink} href="/update">
+      <Link as={RouterLink} to="/update">
       <Button  size={'sm'}> Update Profile</Button>
      </Link>
       }

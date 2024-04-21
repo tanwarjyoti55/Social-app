@@ -1,5 +1,5 @@
 import { Flex, Image, Link, useColorMode } from "@chakra-ui/react";
-import React from "react";
+// import React from "react";
 import { useSelector } from "react-redux";
 import { AiFillHome } from "react-icons/ai";
 import { RxAvatar } from "react-icons/rx";
@@ -23,7 +23,7 @@ function Header() {
         onClick={toggleColorMode}
       />
       {user && (
-        <Link as={RouterLink} to={`/${user.username}`}>
+        <Link as={RouterLink} to={`/${user?.username}`}>
           <RxAvatar size={24} />
         </Link>
       )}

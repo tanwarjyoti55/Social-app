@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Button,
   Flex,
@@ -101,7 +101,7 @@ export default function UpdatePage() {
                 />
               </Center>
               <Center w="full">
-                <Button w="full" onClick={(e) => imgRef.current.click()}>
+                <Button w="full" onClick={() => imgRef.current.click()}>
                   Change Avatar
                 </Button>
                 <Input

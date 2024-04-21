@@ -129,6 +129,20 @@ const getFeedPost = async (req, res) => {
   }
 };
 
+const getUserPost = async (req,res)=>{
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({username});
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const post = await Post.find({postedBy: user._id});
+    res.status(200).json(post)
+  } catch (error) {
+   res.status(500).json(error.message);
+   console.log(`Error Occurred : ${error.message}`); 
+  }
+}
 export {
   createPost,
   getPost,
@@ -136,4 +150,5 @@ export {
   likeUnlikePost,
   replyToPost,
   getFeedPost,
+  getUserPost,
 };
