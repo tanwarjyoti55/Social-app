@@ -37,11 +37,10 @@ const CreatePost = () => {
   const [remainingChar, setRemainingChar] = useState(MAX_CHAR);
   const user = useSelector((state) => state.userSlice.value);
   const [loading, setLoading] = useState(false);
-  const dispatch =useDispatch();
-  const posts = useSelector((state)=>state.postSlice.value);
+  const dispatch = useDispatch();
+  const posts = useSelector((state) => state.postSlice.value);
   const { username } = useParams();
 
-console.log(posts)
   const handleTextChange = (e) => {
     const inputText = e.target.value;
 
@@ -70,10 +69,10 @@ console.log(posts)
         return;
       }
       toast.success("Post created successfully");
-        if (username === user.username) {
-          dispatch(postData([...posts, data]));
-          // setPosts([data, ...posts]);
-        }
+      if (username === user.username) {
+        dispatch(postData([...posts, data]));
+        // setPosts([data, ...posts]);
+      }
       onClose();
       setPostText("");
       setImgUrl("");
@@ -83,7 +82,6 @@ console.log(posts)
       setLoading(false);
     }
   };
-
 
   return (
     <>

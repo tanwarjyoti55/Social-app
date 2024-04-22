@@ -12,9 +12,8 @@ const UserPage = () => {
   const [user, setUser] = useState(null);
   const { username } = useParams();
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
-  const posts= useSelector((state)=>state.postSlice.value);
-  const [fetchingPost, setFetchingPost] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [fetchingPost, setFetchingPost] = useState(true);
 
   useEffect(() => {
     setLoading(true);
@@ -32,30 +31,44 @@ const UserPage = () => {
         setLoading(false);
       }
     };
+
+    // const getUserPosts = async () => {
+    //   setFetchingPost(true);
+    //   try {
+    //     const res = await axios.get(`/api/posts/user/${username}`);
+    //     const data = res.data;
+    //     if (data.error) {
+    //       toast.error(data.error);
+    //     }
+    //     setPosts(data);
+    //   } catch (error) {
+    //     toast.error(error);
+    //   } finally {
+    //     setFetchingPost(false);
+    //   }
+    // };
     getUser();
+    // getUserPosts();
   }, [username]);
 
-
-  useEffect(() => {
-    setFetchingPost(true);
-    const getPost = async () => {
-      try {
-        const res = await axios.get(`/api/posts/user/${username}`);
-        const data = res.data;
-        console.log(data,'befor dispatch')
-        if (data.error) {
-          toast.error(data.error);
-        }
-        dispatch(postData(data));
-        console.log(posts,'after dispatch');
-      } catch (error) {
-        toast.error(error);
-      } finally {
-        setFetchingPost(false);
-      }
-    };
-    getPost();
-  }, [dispatch, username]);
+  // useEffect(() => {
+  //   setFetchingPost(true);
+  //   const getUserPosts = async () => {
+  //     try {
+  //       const res = await axios.get(`/api/posts/user/${username}`);
+  //       const data = res.data;
+  //       if (data.error) {
+  //         toast.error(data.error);
+  //       }
+  //       dispatch(postData(data));
+  //     } catch (error) {
+  //       toast.error(error);
+  //     } finally {
+  //       setFetchingPost(false);
+  //     }
+  //   };
+  //   getUserPosts();
+  // }, [username]);
 
   if (!user && loading) {
     return (
@@ -67,20 +80,20 @@ const UserPage = () => {
 
   if (!user && !loading) return <Text>User Not Found</Text>;
 
-  if (!posts && fetchingPost) {
-    return (
-      <Flex justifyContent={"center"}>
-        <Spinner size={"xl"} />
-      </Flex>
-    );
-  }
+  // if (fetchingPost) {
+  //   return (
+  //     <Flex justifyContent={"center"}>
+  //       <Spinner size={"xl"} />
+  //     </Flex>
+  //   );
+  // }
 
   return (
     <>
       <UserHeader user={user} />
       {!fetchingPost && posts?.length === 0 && <h1>No post Yet</h1>}
       {posts.map((post) => (
-        <UserPost key={post?._id} postedBy={post?.postedBy} post={post} />
+        <UserPost key={post._id} postedBy={post?.postedBy} post={post} />
       ))}
       {/* <UserPost
         postImg={"/post1.png"}

@@ -35,7 +35,7 @@ route.get("/:id", getPost);
 route.get("/user/:username", getUserPost);
 route.post("/create", protectRoute, upload.single("image"), createPost);
 route.delete("/:id", protectRoute, deletePost);
-route.post("/likes/:id", protectRoute, likeUnlikePost);
-route.post("/reply/:id", protectRoute, replyToPost);
+route.put("/likes/:id", protectRoute, likeUnlikePost);
+route.put("/reply/:id", protectRoute, replyToPost);
 
 export default route;
