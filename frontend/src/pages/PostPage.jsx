@@ -5,44 +5,118 @@ import {
   Divider,
   Flex,
   Image,
+  Spinner,
   Text,
 } from "@chakra-ui/react";
 import Actions from "../components/Actions";
 import Comment from "../components/Comment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { postData } from "../slice/postSlice";
+import useGetUserProfile from "../../hooks/useGetUserProfile";
+import { useParams } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
+import { DeleteIcon } from "@chakra-ui/icons";
+import useDeletePost from "../../hooks/useDeletePost";
 
 const PostPage = () => {
-  const [liked, setLiked] = useState(false);
+  const { user, loading } = useGetUserProfile();
+  const dispatch = useDispatch();
+  const { pid } = useParams();
+  const post = useSelector((state) => state.postSlice.value);
+  const [loadingPost, setLoadingPost] = useState(true);
+  const currentUser = useSelector((state) => state.userSlice.value);
+  // const { handleDeletePost } = useDeletePost();
+
+  useEffect(() => {
+    const getPost = async () => {
+      try {
+        setLoadingPost(true);
+        const res = await axios.get(`/api/posts/${pid}`);
+        const data = res.data;
+        if (data.error) {
+          toast.error(data.error);
+        }
+        dispatch(postData(data));
+        console.log(data, "data");
+      } catch (error) {
+        toast.error(error);
+      } finally {
+        setLoadingPost(false);
+      }
+    };
+    getPost();
+  }, [pid]);
+
+  if (loading || loadingPost) {
+    return (
+      <Flex justifyContent={"center"}>
+        <Spinner size={"xl"} />
+      </Flex>
+    );
+  }
+
+  if (!post) {
+    return;
+  }
+
   return (
     <>
       <Flex>
         <Flex w={"full"} alignItems={"center"} gap={3}>
-          <Avatar src="/zuck-avatar.png" size={"md"} name="Mark Zuckerberg" />
+          <Avatar
+            src={
+              `http://localhost:5000/uploads/${user?.profilePic}` ||
+              user?.profilePic
+            }
+            size={"md"}
+            name={user?.username}
+          />
           <Flex>
             <Text fontSize={"sm"} fontWeight={"bold"}>
-              markzuckerberg
+              {user?.username}
             </Text>
             <Image src="/verified.png" w="4" h={4} ml={4} />
           </Flex>
         </Flex>
+        <Flex gap={4} alignItems={"center"}>
+          <Text
+            fontSize={"xs"}
+            width={"100px"}
+            textAlign={"right"}
+            color={"gray.light"}
+          >
+            {formatDistanceToNow(new Date(post.createdAt))} ago
+          </Text>
+          {currentUser?._id === user?._id && (
+            <DeleteIcon
+              cursor={"pointer"}
+              // onClick={handleDeletePost(post._id)}
+            />
+          )}
+        </Flex>
       </Flex>
 
-      <Text my={3}>Let&#39;s talk about Threads.</Text>
+      <Text my={3}>{post.text}</Text>
 
-      <Box
-        borderRadius={6}
-        overflow={"hidden"}
-        border={"1px solid"}
-        borderColor={"gray.light"}
-      >
-        <Image src="/post1.png" w={"full"} />
-      </Box>
+      {post.img && (
+        <Box
+          borderRadius={6}
+          overflow={"hidden"}
+          border={"1px solid"}
+          borderColor={"gray.light"}
+        >
+          <Image src={`http://localhost:5000/uploads/${post.img}`} w={"full"} />
+        </Box>
+      )}
 
       <Flex gap={3} my={3}>
-        <Actions liked={liked} setLiked={setLiked} />
+        <Actions post={post} />
       </Flex>
 
-      <Flex gap={2} alignItems={"center"}>
+      {/* <Flex gap={2} alignItems={"center"}>
         <Text color={"gray.light"} fontSize={"sm"}>
           238 replies
         </Text>
@@ -50,7 +124,7 @@ const PostPage = () => {
         <Text color={"gray.light"} fontSize={"sm"}>
           {200 + (liked ? 1 : 0)} likes
         </Text>
-      </Flex>
+      </Flex> */}
 
       <Divider my={4} />
 

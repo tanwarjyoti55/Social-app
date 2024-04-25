@@ -8,10 +8,15 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
+import { DeleteIcon } from "@chakra-ui/icons";
+import { useSelector } from "react-redux";
+import useDeletePost from "../../hooks/useDeletePost";
 
 const UserPost = ({ post, postedBy }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const currentUser = useSelector((state) => state.userSlice.value);
+  // const { handleDeletePost } = useDeletePost();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -49,12 +54,14 @@ const UserPost = ({ post, postedBy }) => {
           />
           <Box w="1px" h={"full"} bg="gray.light" my={2}></Box>
           <Box position={"relative"} w={"full"}>
-            {post?.replies.length === 0 && <Text textAlign={"center"}>😒</Text>}
+            {post?.replies?.length === 0 && (
+              <Text textAlign={"center"}>😒</Text>
+            )}
             {post?.replies[0] && (
               <Avatar
                 size="xs"
                 name="John doe"
-                src={`http://localhost:5000/uploads/${post?.replies[0].userProfilePic}`}
+                src={`http://localhost:5000/uploads/${post?.replies[0]?.userProfilePic}`}
                 position={"absolute"}
                 top={"0px"}
                 left="15px"
@@ -66,7 +73,7 @@ const UserPost = ({ post, postedBy }) => {
               <Avatar
                 size="xs"
                 name="John doe"
-                src={`http://localhost:5000/uploads/${post?.replies[1].userProfilePic}`}
+                src={`http://localhost:5000/uploads/${post?.replies[1]?.userProfilePic}`}
                 position={"absolute"}
                 bottom={"0px"}
                 right="-5px"
@@ -78,7 +85,7 @@ const UserPost = ({ post, postedBy }) => {
               <Avatar
                 size="xs"
                 name="John doe"
-                src={`http://localhost:5000/uploads/${post?.replies[2].userProfilePic}`}
+                src={`http://localhost:5000/uploads/${post?.replies[2]?.userProfilePic}`}
                 position={"absolute"}
                 bottom={"0px"}
                 left="4px"
@@ -101,7 +108,7 @@ const UserPost = ({ post, postedBy }) => {
                 {user?.username}
               </Text>
               <Image
-                src={user?.followers.length >= 20 ? "/verified.png" : ""}
+                src={user?.followers.length >= 20 && "/verified.png"}
                 w={4}
                 h={4}
                 ml={1}
@@ -116,7 +123,12 @@ const UserPost = ({ post, postedBy }) => {
               >
                 {formatDistanceToNow(new Date(post?.createdAt))} ago
               </Text>
-              {/* <BsThreeDots /> */}
+              {currentUser?._id === user?._id && (
+                <DeleteIcon
+                  cursor={"pointer"}
+                  // onClick={handleDeletePost(post?._id)}
+                />
+              )}
             </Flex>
           </Flex>
 

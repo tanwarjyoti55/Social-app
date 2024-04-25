@@ -21,6 +21,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 const Actions = ({ post: _post }) => {
+  console.log(_post, "_post");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const user = useSelector((state) => state.userSlice.value);
   const [liked, setLiked] = useState(_post?.likes.includes(user?._id));
