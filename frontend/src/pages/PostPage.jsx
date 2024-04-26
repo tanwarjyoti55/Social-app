@@ -28,7 +28,7 @@ const PostPage = () => {
   const post = useSelector((state) => state.postSlice.value);
   const [loadingPost, setLoadingPost] = useState(true);
   const currentUser = useSelector((state) => state.userSlice.value);
-  // const { handleDeletePost } = useDeletePost();
+  const { handleDeletePost } = useDeletePost();
 
   useEffect(() => {
     const getPost = async () => {
@@ -48,7 +48,7 @@ const PostPage = () => {
       }
     };
     getPost();
-  }, [pid]);
+  }, [pid, dispatch]);
 
   if (loading || loadingPost) {
     return (
@@ -61,6 +61,8 @@ const PostPage = () => {
   if (!post) {
     return;
   }
+
+  const createdAtDate = post?.createdAt ? new Date(post.createdAt) : null;
 
   return (
     <>
@@ -88,12 +90,16 @@ const PostPage = () => {
             textAlign={"right"}
             color={"gray.light"}
           >
-            {formatDistanceToNow(new Date(post.createdAt))} ago
+            {createdAtDate ? (
+              <>{formatDistanceToNow(createdAtDate)} ago</>
+            ) : (
+              "Unknown"
+            )}
           </Text>
           {currentUser?._id === user?._id && (
             <DeleteIcon
               cursor={"pointer"}
-              // onClick={handleDeletePost(post._id)}
+              onClick={() => handleDeletePost(post._id)}
             />
           )}
         </Flex>
@@ -116,16 +122,6 @@ const PostPage = () => {
         <Actions post={post} />
       </Flex>
 
-      {/* <Flex gap={2} alignItems={"center"}>
-        <Text color={"gray.light"} fontSize={"sm"}>
-          238 replies
-        </Text>
-        <Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.light"}></Box>
-        <Text color={"gray.light"} fontSize={"sm"}>
-          {200 + (liked ? 1 : 0)} likes
-        </Text>
-      </Flex> */}
-
       <Divider my={4} />
 
       <Flex justifyContent={"space-between"}>
@@ -137,27 +133,23 @@ const PostPage = () => {
       </Flex>
 
       <Divider my={4} />
-      <Comment
-        comment="Looks Good"
-        createdAt="1d"
-        likes={200}
-        username={"Mark Zukerberge"}
-        profilePic={"/post1.png"}
-      />
-      <Comment
-        comment="Amazing"
-        createdAt="3d"
-        likes={100}
-        username={"Johndeo"}
-        profilePic={"/post2.png"}
-      />
-      <Comment
-        comment="Ohh looks very pretty"
-        createdAt="6d"
-        likes={800}
-        username={"Mark Zukerberge"}
-        profilePic={"/post3.png"}
-      />
+
+      {post.replies.map((reply) => {
+        return (
+          <Comment
+            comment={reply.text}
+            createdAt={
+              createdAtDate ? (
+                <>{formatDistanceToNow(createdAtDate)} ago</>
+              ) : (
+                "Unknown"
+              )
+            }
+            username={reply.username}
+            profilePic={`http://localhost:5000/uploads/${reply.userProfilePic}`}
+          />
+        );
+      })}
     </>
   );
 };

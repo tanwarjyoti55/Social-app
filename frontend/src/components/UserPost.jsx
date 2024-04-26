@@ -16,7 +16,7 @@ const UserPost = ({ post, postedBy }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.userSlice.value);
-  // const { handleDeletePost } = useDeletePost();
+  const { handleDeletePost } = useDeletePost();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -36,6 +36,10 @@ const UserPost = ({ post, postedBy }) => {
     fetchUser();
   }, [postedBy]);
 
+  if (!post) return;
+
+  const createdAtDate = post?.createdAt ? new Date(post.createdAt) : null;
+
   return (
     <Link to={`/${user?.username}/post/${post?._id}`}>
       <Flex gap={3} mb={4} py={5}>
@@ -54,10 +58,10 @@ const UserPost = ({ post, postedBy }) => {
           />
           <Box w="1px" h={"full"} bg="gray.light" my={2}></Box>
           <Box position={"relative"} w={"full"}>
-            {post?.replies?.length === 0 && (
+            {post.replies && post?.replies.length === 0 && (
               <Text textAlign={"center"}>😒</Text>
             )}
-            {post?.replies[0] && (
+            {post.replies && post.replies[0] && (
               <Avatar
                 size="xs"
                 name="John doe"
@@ -69,7 +73,7 @@ const UserPost = ({ post, postedBy }) => {
               />
             )}
 
-            {post?.replies[1] && (
+            {post.replies && post?.replies[1] && (
               <Avatar
                 size="xs"
                 name="John doe"
@@ -81,7 +85,7 @@ const UserPost = ({ post, postedBy }) => {
               />
             )}
 
-            {post?.replies[2] && (
+            {post.replies && post?.replies[2] && (
               <Avatar
                 size="xs"
                 name="John doe"
@@ -121,12 +125,16 @@ const UserPost = ({ post, postedBy }) => {
                 textAlign={"right"}
                 color={"gray.light"}
               >
-                {formatDistanceToNow(new Date(post?.createdAt))} ago
+                {createdAtDate ? (
+                  <>{formatDistanceToNow(createdAtDate)} ago</>
+                ) : (
+                  "Unknown"
+                )}
               </Text>
               {currentUser?._id === user?._id && (
                 <DeleteIcon
                   cursor={"pointer"}
-                  // onClick={handleDeletePost(post?._id)}
+                  onClick={() => handleDeletePost(post?._id)}
                 />
               )}
             </Flex>

@@ -16,8 +16,10 @@ import axios from "axios";
 const UserHeader = ({ user }) => {
   const showToast = useToast();
   const currentUser = useSelector((state) => state.userSlice.value);
-  const [following,setFollowing]=useState(user.followers.includes(currentUser._id));
-  const[updating,setUpdating]=useState(false);
+  const [following, setFollowing] = useState(
+    user.followers.includes(currentUser._id)
+  );
+  const [updating, setUpdating] = useState(false);
 
   const copyURL = () => {
     const currentURL = window.location.href;
@@ -32,34 +34,33 @@ const UserHeader = ({ user }) => {
     });
   };
 
-  const handleFollowUnfollow = async()=>{
-    if(!currentUser){
-      toast.info('Logged in the app');
-      return
+  const handleFollowUnfollow = async () => {
+    if (!currentUser) {
+      toast.info("Logged in the app");
+      return;
     }
-    if(updating) return;
+    if (updating) return;
     setUpdating(true);
-try {
- 
-  const res= await axios.post(`/api/users/follow/${user?._id}`);
-  const data= res.data;
-  if(data.error){
-    toast.error(data.error);
-  }
-  if(following){
-    toast.success(`Unfollow ${user?.name} successfully`);
-    user?.followers.pop();
-  }else{
-    toast.success(`Followed ${user?.name} successfully`);
-    user?.followers.push(currentUser._id);
-  }
-  setFollowing(!following);
-} catch (error) {
-  toast.error(`Error ${error}`)
-}finally{
-  setUpdating(false)
-}
-  }
+    try {
+      const res = await axios.post(`/api/users/follow/${user?._id}`);
+      const data = res.data;
+      if (data.error) {
+        toast.error(data.error);
+      }
+      if (following) {
+        toast.success(`Unfollow ${user?.name} successfully`);
+        user?.followers.pop();
+      } else {
+        toast.success(`Followed ${user?.name} successfully`);
+        user?.followers.push(currentUser._id);
+      }
+      setFollowing(!following);
+    } catch (error) {
+      toast.error(`Error ${error}`);
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   return (
     <VStack gap={4} alignItems={"start"}>
@@ -98,20 +99,23 @@ try {
 
       <Text>{user?.bio}</Text>
 
-      {currentUser._id===user._id &&
-      <Link as={RouterLink} to="/update">
-      <Button  size={'sm'}> Update Profile</Button>
-     </Link>
-      }
+      {currentUser._id === user._id && (
+        <Link as={RouterLink} to="/update">
+          <Button size={"sm"}> Update Profile</Button>
+        </Link>
+      )}
 
-{currentUser._id!==user._id &&
-        <Button  size={'sm'} onClick={handleFollowUnfollow} isLoading={updating}> {following ? 'Unfollow' : 'Follow'}</Button>
-    
-      }
+      {currentUser._id !== user._id && (
+        <Button size={"sm"} onClick={handleFollowUnfollow} isLoading={updating}>
+          {" "}
+          {following ? "Unfollow" : "Follow"}
+        </Button>
+      )}
 
       <Flex w={"full"} justifyContent={"space-between"}>
         <Flex gap={2} alignItems={"center"}>
           <Text color={"gray.light"}>{user?.followers.length} followers</Text>
+          <Text color={"gray.light"}>{user?.following.length} following</Text>
           <Box w="1" h="1" bg={"gray.light"} borderRadius={"full"}></Box>
           <Link color={"gray.light"}>instagram.com</Link>
         </Flex>

@@ -1,10 +1,10 @@
 import { Avatar, Divider, Flex, Text } from "@chakra-ui/react";
-import { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import Actions from "./Actions";
+import { useSelector } from "react-redux";
 
-const Comment = ({ comment, createdAt, likes, username, profilePic }) => {
-  const [liked, setLiked] = useState(false);
+const Comment = ({ comment, createdAt, username, profilePic }) => {
+  const post = useSelector((state) => state.postSlice.value);
   return (
     <>
       <Flex gap={4} py={2} my={2} w={"full"}>
@@ -26,10 +26,7 @@ const Comment = ({ comment, createdAt, likes, username, profilePic }) => {
             </Flex>
           </Flex>
           <Text>{comment}</Text>
-          <Actions liked={liked} setLiked={setLiked} />
-          <Text fontSize={"sm"} color={"gray.light"}>
-            {likes + (liked ? 1 : 0)} likes
-          </Text>
+          <Actions post={post} />
         </Flex>
       </Flex>
       <Divider />
