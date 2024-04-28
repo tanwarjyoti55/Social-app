@@ -36,6 +36,30 @@ const postSchema = mongoose.Schema(
         username: {
           type: String,
         },
+        commentLikes: {
+          type: [mongoose.Schema.Types.ObjectId],
+          ref: "User",
+          default: [],
+        },
+        commentReplies: [
+          {
+            userId: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "User",
+              required: true,
+            },
+            text: {
+              type: String,
+              required: true,
+            },
+            userProfilePic: {
+              type: String,
+            },
+            username: {
+              type: String,
+            },
+          },
+        ],
       },
     ],
   },

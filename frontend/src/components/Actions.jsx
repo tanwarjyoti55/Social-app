@@ -1,8 +1,10 @@
 import {
   Box,
   Button,
+  // CloseButton,
   Flex,
   FormControl,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -16,17 +18,25 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useRef, useState } from "react";
+import { BsFillImageFill } from "react-icons/bs";
+import {  useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import usePreviewImage from "../../hooks/usePreviewImage";
+import { useParams } from "react-router-dom";
+import { postData } from "../slice/postSlice";
+// import { useParams } from "react-router-dom";
+// import { postData } from "../slice/postSlice";
 
-const Actions = ({ post: _post }) => {
+const Actions = ({ post }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const user = useSelector((state) => state.userSlice.value);
   const [liked, setLiked] = useState(
-    _post?.likes && user && _post.likes.includes(user._id)
+    post?.likes && user && post.likes.includes(user._id)
   );
-  const [post, setPost] = useState(_post);
+  const dispatch=useDispatch();
+  // const [post, setPost] = useState(_post);
+  // const post=useSelector(state=>state.postSlice.value);
   const [reply, setReply] = useState("");
   const [isLiking, setIsLiking] = useState(false);
   const [isReply, setIsReply] = useState(false);
@@ -43,9 +53,9 @@ const Actions = ({ post: _post }) => {
       }
 
       if (!liked) {
-        setPost({ ...post, likes: [...post.likes, user._id] });
+        dispatch(postData({ ...post, likes: [...post.likes, user._id] }));
       } else {
-        setPost({ ...post, likes: post.likes.filter((id) => id !== user._id) });
+        dispatch(postData({ ...post, likes: post.likes.filter((id) => id !== user._id) }));
       }
       setLiked(!liked);
     } catch (error) {
@@ -67,7 +77,7 @@ const Actions = ({ post: _post }) => {
       if (data.error) {
         toast.error(data.error);
       }
-      setPost({ ...post, replies: [...post.replies, data.reply] });
+      dispatch(postData({ ...post, replies: [...post.replies, data.reply] }));
       onClose();
       setReply("");
     } catch (error) {
@@ -148,7 +158,7 @@ const Actions = ({ post: _post }) => {
           </ModalContent>
         </Modal>
 
-        <RepostSvg />
+        <RepostSvg/>
         <ShareSvg />
       </Flex>
       <Flex gap={2} alignItems={"center"}>
@@ -167,8 +177,47 @@ const Actions = ({ post: _post }) => {
 export default Actions;
 
 const RepostSvg = () => {
+  const MAX_CHAR = 500;
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const user = useSelector((state) => state.userSlice.value);
+  const { handlePreviewImage  } = usePreviewImage();
+  const imageRef = useRef(null);
+  const [remainingChar] = useState(MAX_CHAR);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const posts = useSelector((state) => state.postSlice.value);
+  const { username } = useParams();
+
+  const handleRepostPost = async () => {
+        setLoading(true);
+    try{
+    const res = await axios.post(`/api/posts/create`, {
+      postedBy: posts?.postedBy,
+      text: posts?.text,
+      img: posts?.img
+    });
+
+      const data = res.data;
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
+      toast.success("Repost successfully");
+      if (username === user.username) {
+        dispatch(postData([...posts, data]));
+      }
+      // onClose();
+    } catch (error) {
+      toast.error(error);
+    } finally {
+      setLoading(false);
+      onClose();
+    }
+  };
+
+
   return (
-    <svg
+    <><svg
       aria-label="Repost"
       color="currentColor"
       fill="currentColor"
@@ -176,6 +225,8 @@ const RepostSvg = () => {
       role="img"
       viewBox="0 0 24 24"
       width="20"
+      onClick={onOpen}
+      cursor={'pointer'}
     >
       <title>Repost</title>
       <path
@@ -183,6 +234,62 @@ const RepostSvg = () => {
         d="M19.998 9.497a1 1 0 0 0-1 1v4.228a3.274 3.274 0 0 1-3.27 3.27h-5.313l1.791-1.787a1 1 0 0 0-1.412-1.416L7.29 18.287a1.004 1.004 0 0 0-.294.707v.001c0 .023.012.042.013.065a.923.923 0 0 0 .281.643l3.502 3.504a1 1 0 0 0 1.414-1.414l-1.797-1.798h5.318a5.276 5.276 0 0 0 5.27-5.27v-4.228a1 1 0 0 0-1-1Zm-6.41-3.496-1.795 1.795a1 1 0 1 0 1.414 1.414l3.5-3.5a1.003 1.003 0 0 0 0-1.417l-3.5-3.5a1 1 0 0 0-1.414 1.414l1.794 1.794H8.27A5.277 5.277 0 0 0 3 9.271V13.5a1 1 0 0 0 2 0V9.271a3.275 3.275 0 0 1 3.271-3.27Z"
       ></path>
     </svg>
+    <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+
+        <ModalContent>
+          <ModalHeader>Repost</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <FormControl>
+            <Textarea
+                placeholder="Post content goes here.."
+                defaultValue={posts?.text}
+                readOnly // Make the textarea read-only
+              />
+              <Text
+                fontSize="xs"
+                fontWeight="bold"
+                textAlign={"right"}
+                m={"1"}
+                color={"gray.800"}
+              >
+                {remainingChar}/{MAX_CHAR}
+              </Text>
+
+              <Input
+                type="file"
+                hidden
+                ref={imageRef}
+                onChange={handlePreviewImage}
+                disabled={true} />
+
+              <BsFillImageFill 
+                style={{ marginLeft: "5px", cursor: "pointer" }}
+                size={16}
+                onClick={() => imageRef.current.click()} />
+            </FormControl>
+
+            {posts?.img && (
+                <Flex mt={5} w={"full"} position={"relative"}>
+                  <Image src={`http://localhost:5000/uploads/${posts?.img}`} alt="Selected img" />
+                </Flex>
+              )}
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={handleRepostPost}
+              isLoading={loading}
+            >
+              Repost
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal></>
+
   );
 };
 

@@ -7,6 +7,8 @@ import {
   replyToPost,
   getFeedPost,
   getUserPost,
+  commentLikeUnlikePost,
+  commentReplyToPost,
 } from "../controller/postController.js";
 import protectRoute from "../middlewares/protectRoute.js";
 
@@ -36,6 +38,8 @@ route.get("/user/:username", getUserPost);
 route.post("/create", protectRoute, upload.single("image"), createPost);
 route.delete("/:id", protectRoute, deletePost);
 route.put("/likes/:id", protectRoute, likeUnlikePost);
+route.post("/comment/likes/:id", protectRoute, commentLikeUnlikePost);
+route.post("/comment/reply/:id", protectRoute, commentReplyToPost);
 route.put("/reply/:id", protectRoute, replyToPost);
 
 export default route;

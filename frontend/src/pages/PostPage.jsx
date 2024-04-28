@@ -134,10 +134,11 @@ const PostPage = () => {
 
       <Divider my={4} />
 
-      {post.replies.map((reply) => {
+      {post?.replies?.map((reply) => {
         return (
+          // eslint-disable-next-line react/jsx-key
           <Comment
-            comment={reply.text}
+            comment={reply?.text}
             createdAt={
               createdAtDate ? (
                 <>{formatDistanceToNow(createdAtDate)} ago</>

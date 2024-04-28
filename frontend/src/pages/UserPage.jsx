@@ -33,7 +33,7 @@ const UserPage = () => {
       }
     };
     getUserPosts();
-  }, [username]);
+  }, [dispatch, username]);
 
   if (!user && loading) {
     return (
@@ -58,7 +58,7 @@ const UserPage = () => {
       <UserHeader user={user} />
       {!fetchingPost && posts?.length === 0 && <h1>No post Yet</h1>}
       {posts.map((post) => (
-        <UserPost key={post._id} postedBy={post?.postedBy} post={post} />
+        <UserPost key={post._id} postedBy={post.postedBy} post={post} />
       ))}
     </>
   );
