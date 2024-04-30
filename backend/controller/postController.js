@@ -90,19 +90,29 @@ const commentLikeUnlikePost = async (req, res) => {
   try {
     const { id: postId } = req.params;
     const userId = req.user._id;
+    const replyIndex = req.body.replyIndex;
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    const isLikedPost = await post.replies.commentLikes.includes(userId);
+    if (replyIndex < 0 || replyIndex >= post.replies.length) {
+      return res.status(400).json({ error: "Invalid reply index" });
+    }
+
+    const isLikedPost = await post.replies[replyIndex].commentLikes.includes(
+      userId
+    );
     if (isLikedPost) {
       //unlike the post
-      await Post.updateOne({ _id: postId }, { $pull: { commentLikes: userId } });
+      await Post.updateOne(
+        { _id: postId },
+        { $pull: { commentLikes: userId } }
+      );
       res.status(200).json({ message: "Post Unliked successfully" });
     } else {
       //like the post
-      post.replies.commentLikes.push(userId);
+      post.replies[replyIndex].commentLikes.push(userId);
       await post.save();
       res.status(200).json({ message: "Post Liked successfully" });
     }
@@ -111,7 +121,6 @@ const commentLikeUnlikePost = async (req, res) => {
     console.log(`Error Occurred : ${error.message}`);
   }
 };
-
 
 const commentReplyToPost = async (req, res) => {
   try {
@@ -122,8 +131,6 @@ const commentReplyToPost = async (req, res) => {
     const userProfilePic = req.user.profilePic;
     const username = req.user.username;
 
-    console.log(replyIndex,'replyIndex')
-
     if (!text) {
       return res.status(400).json({ error: "Text field is required" });
     }
@@ -132,14 +139,13 @@ const commentReplyToPost = async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
 
-
-      // Assuming you have the index of the reply in the `replies` array
+    // Assuming you have the index of the reply in the `replies` array
     // Assuming you pass this in the request
-    
-      // Check if the replyIndex is valid
-      if (replyIndex < 0 || replyIndex >= post.replies.length) {
-        return res.status(400).json({ error: "Invalid reply index" });
-      }
+
+    // Check if the replyIndex is valid
+    if (replyIndex < 0 || replyIndex >= post.replies.length) {
+      return res.status(400).json({ error: "Invalid reply index" });
+    }
 
     const reply = { text, userId, userProfilePic, username };
     post.replies[replyIndex].commentReplies.push(reply);
@@ -219,5 +225,5 @@ export {
   getFeedPost,
   getUserPost,
   commentLikeUnlikePost,
-  commentReplyToPost
+  commentReplyToPost,
 };

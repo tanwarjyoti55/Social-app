@@ -134,21 +134,40 @@ const PostPage = () => {
 
       <Divider my={4} />
 
-      {post?.replies?.map((reply) => {
+      {post?.replies?.map((reply, index) => {
         return (
-          // eslint-disable-next-line react/jsx-key
-          <Comment
-            comment={reply?.text}
-            createdAt={
-              createdAtDate ? (
-                <>{formatDistanceToNow(createdAtDate)} ago</>
-              ) : (
-                "Unknown"
-              )
-            }
-            username={reply.username}
-            profilePic={`http://localhost:5000/uploads/${reply.userProfilePic}`}
-          />
+          <>
+            {/* eslint-disable-next-line react/jsx-key */}
+            <Comment
+              key={index}
+              index={index}
+              comment={reply?.text}
+              createdAt={
+                createdAtDate ? (
+                  <>{formatDistanceToNow(createdAtDate)} ago</>
+                ) : (
+                  "Unknown"
+                )
+              }
+              username={reply.username}
+              profilePic={`http://localhost:5000/uploads/${reply.userProfilePic}`}
+            />
+            {reply?.commentReplies.map((comment, i) => {
+              <Comment
+                key={i}
+                comment={comment?.text}
+                createdAt={
+                  createdAtDate ? (
+                    <>{formatDistanceToNow(createdAtDate)} ago</>
+                  ) : (
+                    "Unknown"
+                  )
+                }
+                username={comment.username}
+                profilePic={`http://localhost:5000/uploads/${comment.userProfilePic}`}
+              />;
+            })}
+          </>
         );
       })}
     </>
