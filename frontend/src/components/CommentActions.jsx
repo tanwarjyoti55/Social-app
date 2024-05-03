@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  // CloseButton,
   Flex,
   FormControl,
   Input,
@@ -19,18 +18,15 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-
 import { postData } from "../slice/postSlice";
-// import { useParams } from "react-router-dom";
-// import { postData } from "../slice/postSlice";
 
 const CommentActions = ({ post, index: replyIndex }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const user = useSelector((state) => state.userSlice.value);
   const [liked, setLiked] = useState(
-    post?.replies[replyIndex].commentLikes &&
+    post?.replies[replyIndex]?.commentLikes &&
       user &&
-      post?.replies[replyIndex].commentLikes.includes(user._id)
+      post?.replies[replyIndex]?.commentLikes.includes(user._id)
   );
   const dispatch = useDispatch();
   const [reply, setReply] = useState("");
@@ -38,7 +34,10 @@ const CommentActions = ({ post, index: replyIndex }) => {
   const [isReply, setIsReply] = useState(false);
 
   const handleLikedAndUnliked = async (replyIndex) => {
-    if (!user) toast.error("You must logged in to like post");
+    if (!user) {
+      toast.error("You must be logged in to like a post");
+      return;
+    }
     if (isLiking) return;
     setIsLiking(true);
     try {
@@ -48,28 +47,43 @@ const CommentActions = ({ post, index: replyIndex }) => {
       const data = res.data;
       if (data.error) {
         toast.error(data.error);
+        return;
       }
 
       if (!liked) {
         dispatch(
           postData({
             ...post,
-            commentLikes: [...post.replies[replyIndex].commentLikes, user._id],
+            replies: post.replies.map((reply, index) =>
+              index === replyIndex
+                ? {
+                    ...reply,
+                    commentLikes: [...reply.commentLikes, user._id],
+                  }
+                : reply
+            ),
           })
         );
       } else {
         dispatch(
           postData({
             ...post,
-            commentLikes: post.replies[replyIndex].commentLikes.filter(
-              (id) => id !== user._id
+            replies: post.replies.map((reply, index) =>
+              index === replyIndex
+                ? {
+                    ...reply,
+                    commentLikes: reply.commentLikes.filter(
+                      (id) => id !== user._id
+                    ),
+                  }
+                : reply
             ),
           })
         );
       }
       setLiked(!liked);
     } catch (error) {
-      toast.error(error);
+      toast.error("An error occurred");
     } finally {
       setIsLiking(false);
     }

@@ -40,7 +40,6 @@ const PostPage = () => {
           toast.error(data.error);
         }
         dispatch(postData(data));
-        console.log(data, "data");
       } catch (error) {
         toast.error(error);
       } finally {
@@ -80,7 +79,7 @@ const PostPage = () => {
             <Text fontSize={"sm"} fontWeight={"bold"}>
               {user?.username}
             </Text>
-            <Image src="/verified.png" w="4" h={4} ml={4} />
+            {/* <Image src="/verified.png" w="4" h={4} ml={4} /> */}
           </Flex>
         </Flex>
         <Flex gap={4} alignItems={"center"}>
@@ -141,18 +140,26 @@ const PostPage = () => {
             <Comment
               key={index}
               index={index}
-              comment={reply?.text}
-              createdAt={
-                createdAtDate ? (
-                  <>{formatDistanceToNow(createdAtDate)} ago</>
-                ) : (
-                  "Unknown"
-                )
-              }
-              username={reply.username}
-              profilePic={`http://localhost:5000/uploads/${reply.userProfilePic}`}
+              reply={reply}
+              // createdAt={
+              //   createdAtDate ? (
+              //     <>{formatDistanceToNow(createdAtDate)} ago</>
+              //   ) : (
+              //     "Unknown"
+              //   )
+              // }
+              // username={reply?.username}
+              // profilePic={`http://localhost:5000/uploads/${reply?.userProfilePic}`}
             />
-            {reply?.commentReplies.map((comment, i) => {
+          </>
+        );
+      })}
+      {/* {post?.replies?.map((reply, index) => {
+        // debugger; // eslint-disable-line
+        console.log(reply.commentReplies);
+        {
+          reply?.commentReplies.map((comment, i) => {
+            return (
               <Comment
                 key={i}
                 comment={comment?.text}
@@ -165,11 +172,12 @@ const PostPage = () => {
                 }
                 username={comment.username}
                 profilePic={`http://localhost:5000/uploads/${comment.userProfilePic}`}
-              />;
-            })}
-          </>
-        );
-      })}
+              />
+            );
+            // console.log(comment,)
+          });
+        }
+      })} */}
     </>
   );
 };

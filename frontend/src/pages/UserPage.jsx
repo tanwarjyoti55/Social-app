@@ -52,14 +52,18 @@ const UserPage = () => {
       </Flex>
     );
   }
-
+  if (!posts) return;
   return (
     <>
       <UserHeader user={user} />
-      {!fetchingPost && posts?.length === 0 && <h1>No post Yet</h1>}
-      {posts.map((post) => (
-        <UserPost key={post._id} postedBy={post.postedBy} post={post} />
-      ))}
+      {!fetchingPost && posts?.length === 0 && (
+        <h1 style={{ marginTop: "20px", fontSize: 18 }}>No post Yet</h1>
+      )}
+      {posts &&
+        posts.length > 0 &&
+        posts.map((post) => (
+          <UserPost key={post._id} postedBy={post.postedBy} post={post} />
+        ))}
     </>
   );
 };

@@ -8,10 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { postData } from "../slice/postSlice";
 
 const HomePage = () => {
-  // const user = useSelector((state) => state.userSlice.value);
   const [loading, setLoading] = useState(true);
-  const dispatch=useDispatch();
-  const posts=useSelector(state=>state.postSlice.value);
+  const dispatch = useDispatch();
+  const posts = useSelector((state) => state.postSlice.value);
   useEffect(() => {
     const getFeed = async () => {
       setLoading(true);
@@ -44,11 +43,6 @@ const HomePage = () => {
         <UserPost key={post?._id} postedBy={post?.postedBy} post={post} />
       ))}
     </>
-    // <Link to={`/${user.username}`}>
-    //   <Flex w={"full"} justifyContent={"center"}>
-    //     <Button mx={"auto"}>View Profile Page</Button>
-    //   </Flex>
-    // </Link>
   );
 };
 

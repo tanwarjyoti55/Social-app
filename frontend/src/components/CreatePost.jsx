@@ -73,13 +73,13 @@ const CreatePost = () => {
         dispatch(postData([...posts, data]));
         // setPosts([data, ...posts]);
       }
-      onClose();
       setPostText("");
       setImgUrl("");
     } catch (error) {
       toast.error(error);
     } finally {
       setLoading(false);
+      onClose();
     }
   };
 

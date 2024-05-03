@@ -97,7 +97,9 @@ const UserHeader = ({ user }) => {
         </Box>
       </Flex>
 
-      <Text>{user?.bio}</Text>
+      <Text width={"80%"} textAlign={"justify"}>
+        {user?.bio}
+      </Text>
 
       {currentUser._id === user._id && (
         <Link as={RouterLink} to="/update">

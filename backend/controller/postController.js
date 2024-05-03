@@ -23,7 +23,7 @@ const createPost = async (req, res) => {
     }
     const post = new Post({ postedBy, text, img });
     await post.save();
-    res.status(200).json({ post });
+    res.status(200).json(post);
   } catch (error) {
     res.status(500).json(error.message);
     console.log(`Error Occurred : ${error.message}`);
@@ -106,8 +106,8 @@ const commentLikeUnlikePost = async (req, res) => {
     if (isLikedPost) {
       //unlike the post
       await Post.updateOne(
-        { _id: postId },
-        { $pull: { commentLikes: userId } }
+        { _id: postId, "replies._id": post.replies[replyIndex]._id },
+        { $pull: { "replies.$.commentLikes": userId } }
       );
       res.status(200).json({ message: "Post Unliked successfully" });
     } else {

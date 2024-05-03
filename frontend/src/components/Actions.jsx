@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  // CloseButton,
   Flex,
   FormControl,
   Image,
@@ -20,13 +19,11 @@ import {
 import axios from "axios";
 import { useRef, useState } from "react";
 import { BsFillImageFill } from "react-icons/bs";
-import {  useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import usePreviewImage from "../../hooks/usePreviewImage";
 import { useParams } from "react-router-dom";
 import { postData } from "../slice/postSlice";
-// import { useParams } from "react-router-dom";
-// import { postData } from "../slice/postSlice";
 
 const Actions = ({ post }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -34,9 +31,7 @@ const Actions = ({ post }) => {
   const [liked, setLiked] = useState(
     post?.likes && user && post.likes.includes(user._id)
   );
-  const dispatch=useDispatch();
-  // const [post, setPost] = useState(_post);
-  // const post=useSelector(state=>state.postSlice.value);
+  const dispatch = useDispatch();
   const [reply, setReply] = useState("");
   const [isLiking, setIsLiking] = useState(false);
   const [isReply, setIsReply] = useState(false);
@@ -55,7 +50,12 @@ const Actions = ({ post }) => {
       if (!liked) {
         dispatch(postData({ ...post, likes: [...post.likes, user._id] }));
       } else {
-        dispatch(postData({ ...post, likes: post.likes.filter((id) => id !== user._id) }));
+        dispatch(
+          postData({
+            ...post,
+            likes: post.likes.filter((id) => id !== user._id),
+          })
+        );
       }
       setLiked(!liked);
     } catch (error) {
@@ -98,6 +98,7 @@ const Actions = ({ post }) => {
           role="img"
           viewBox="0 0 24 22"
           width="20"
+          cursor={"pointer"}
           onClick={handleLikedAndUnliked}
         >
           <path
@@ -116,6 +117,7 @@ const Actions = ({ post }) => {
           viewBox="0 0 24 24"
           width="20"
           onClick={onOpen}
+          cursor={"pointer"}
         >
           <title>Comment</title>
           <path
@@ -158,7 +160,7 @@ const Actions = ({ post }) => {
           </ModalContent>
         </Modal>
 
-        <RepostSvg/>
+        <RepostSvg />
         <ShareSvg />
       </Flex>
       <Flex gap={2} alignItems={"center"}>
@@ -180,7 +182,7 @@ const RepostSvg = () => {
   const MAX_CHAR = 500;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const user = useSelector((state) => state.userSlice.value);
-  const { handlePreviewImage  } = usePreviewImage();
+  const { handlePreviewImage } = usePreviewImage();
   const imageRef = useRef(null);
   const [remainingChar] = useState(MAX_CHAR);
   const [loading, setLoading] = useState(false);
@@ -189,13 +191,13 @@ const RepostSvg = () => {
   const { username } = useParams();
 
   const handleRepostPost = async () => {
-        setLoading(true);
-    try{
-    const res = await axios.post(`/api/posts/create`, {
-      postedBy: posts?.postedBy,
-      text: posts?.text,
-      img: posts?.img
-    });
+    setLoading(true);
+    try {
+      const res = await axios.post(`/api/posts/create`, {
+        postedBy: posts?.postedBy,
+        text: posts?.text,
+        img: posts?.img,
+      });
 
       const data = res.data;
       if (data.error) {
@@ -215,26 +217,26 @@ const RepostSvg = () => {
     }
   };
 
-
   return (
-    <><svg
-      aria-label="Repost"
-      color="currentColor"
-      fill="currentColor"
-      height="20"
-      role="img"
-      viewBox="0 0 24 24"
-      width="20"
-      onClick={onOpen}
-      cursor={'pointer'}
-    >
-      <title>Repost</title>
-      <path
-        fill=""
-        d="M19.998 9.497a1 1 0 0 0-1 1v4.228a3.274 3.274 0 0 1-3.27 3.27h-5.313l1.791-1.787a1 1 0 0 0-1.412-1.416L7.29 18.287a1.004 1.004 0 0 0-.294.707v.001c0 .023.012.042.013.065a.923.923 0 0 0 .281.643l3.502 3.504a1 1 0 0 0 1.414-1.414l-1.797-1.798h5.318a5.276 5.276 0 0 0 5.27-5.27v-4.228a1 1 0 0 0-1-1Zm-6.41-3.496-1.795 1.795a1 1 0 1 0 1.414 1.414l3.5-3.5a1.003 1.003 0 0 0 0-1.417l-3.5-3.5a1 1 0 0 0-1.414 1.414l1.794 1.794H8.27A5.277 5.277 0 0 0 3 9.271V13.5a1 1 0 0 0 2 0V9.271a3.275 3.275 0 0 1 3.271-3.27Z"
-      ></path>
-    </svg>
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <>
+      <svg
+        aria-label="Repost"
+        color="currentColor"
+        fill="currentColor"
+        height="20"
+        role="img"
+        viewBox="0 0 24 24"
+        width="20"
+        onClick={onOpen}
+        cursor={"pointer"}
+      >
+        <title>Repost</title>
+        <path
+          fill=""
+          d="M19.998 9.497a1 1 0 0 0-1 1v4.228a3.274 3.274 0 0 1-3.27 3.27h-5.313l1.791-1.787a1 1 0 0 0-1.412-1.416L7.29 18.287a1.004 1.004 0 0 0-.294.707v.001c0 .023.012.042.013.065a.923.923 0 0 0 .281.643l3.502 3.504a1 1 0 0 0 1.414-1.414l-1.797-1.798h5.318a5.276 5.276 0 0 0 5.27-5.27v-4.228a1 1 0 0 0-1-1Zm-6.41-3.496-1.795 1.795a1 1 0 1 0 1.414 1.414l3.5-3.5a1.003 1.003 0 0 0 0-1.417l-3.5-3.5a1 1 0 0 0-1.414 1.414l1.794 1.794H8.27A5.277 5.277 0 0 0 3 9.271V13.5a1 1 0 0 0 2 0V9.271a3.275 3.275 0 0 1 3.271-3.27Z"
+        ></path>
+      </svg>
+      <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
 
         <ModalContent>
@@ -242,7 +244,7 @@ const RepostSvg = () => {
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-            <Textarea
+              <Textarea
                 placeholder="Post content goes here.."
                 defaultValue={posts?.text}
                 readOnly // Make the textarea read-only
@@ -262,19 +264,24 @@ const RepostSvg = () => {
                 hidden
                 ref={imageRef}
                 onChange={handlePreviewImage}
-                disabled={true} />
+                disabled={true}
+              />
 
-              <BsFillImageFill 
+              <BsFillImageFill
                 style={{ marginLeft: "5px", cursor: "pointer" }}
                 size={16}
-                onClick={() => imageRef.current.click()} />
+                onClick={() => imageRef.current.click()}
+              />
             </FormControl>
 
             {posts?.img && (
-                <Flex mt={5} w={"full"} position={"relative"}>
-                  <Image src={`http://localhost:5000/uploads/${posts?.img}`} alt="Selected img" />
-                </Flex>
-              )}
+              <Flex mt={5} w={"full"} position={"relative"}>
+                <Image
+                  src={`http://localhost:5000/uploads/${posts?.img}`}
+                  alt="Selected img"
+                />
+              </Flex>
+            )}
           </ModalBody>
 
           <ModalFooter>
@@ -288,8 +295,8 @@ const RepostSvg = () => {
             </Button>
           </ModalFooter>
         </ModalContent>
-      </Modal></>
-
+      </Modal>
+    </>
   );
 };
 
